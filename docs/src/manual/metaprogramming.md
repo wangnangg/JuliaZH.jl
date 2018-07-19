@@ -595,10 +595,24 @@ QuoteNode
 
 `QuoteNode`在进阶的元编程中可能会用到。
 
+```@raw html
+<!--
+
 ### [`eval`](@ref) and effects
 
+-->
+```
+
+### [`eval`](@ref)函数及其效果
+
+```@raw html
+<!--
 Given an expression object, one can cause Julia to evaluate (execute) it at global scope using
 [`eval`](@ref):
+-->
+```
+
+使用[`eval`](@ref)函数,可以在全局作用域，让 Julia 执行 (evaluate) 一个表达式对象：
 
 ```jldoctest interp1
 julia> :(1 + 2)
@@ -620,9 +634,15 @@ julia> eval(ex)
 3
 ```
 
+```@raw html
+<!--
 Every [module](@ref modules) has its own [`eval`](@ref) function that evaluates expressions in its global
 scope. Expressions passed to [`eval`](@ref) are not limited to returning values -- they can
 also have side-effects that alter the state of the enclosing module's environment:
+-->
+```
+
+每个模块（[module](@ref modules)）都有自己的[`eval`](@ref)函数，用来在全局作用域执行表达式对象。 用[`eval`](@ref)函数执行表达式对象，不仅可以得到返回值，而且还有一个副作用：在当前作用域，修改在这个表达式对象中所被修改的状态量：
 
 ```jldoctest
 julia> ex = :(x = 1)
@@ -638,12 +658,24 @@ julia> x
 1
 ```
 
+```@raw html
+<!--
 Here, the evaluation of an expression object causes a value to be assigned to the global variable
 `x`.
+-->
+```
 
+这里, 对表达式对象所进行的计算给全局变量 `x` 赋了一个值（1）。
+
+```@raw html
+<!--
 Since expressions are just `Expr` objects which can be constructed programmatically and then evaluated,
 it is possible to dynamically generate arbitrary code which can then be run using [`eval`](@ref).
 Here is a simple example:
+-->
+```
+
+既然表达式语句都是可以通过先程序化的构建表达式对象，再计算这个对象从而生成的， 这也就是说，可以动态的生成任意代码（动态的构建表达式对象），然后这些代码可以用 `eval()` 函数执行。 这里有一个简单的例子：
 
 ```julia-repl
 julia> a = 1;
@@ -657,24 +689,51 @@ julia> eval(ex)
 3
 ```
 
+```@raw html
+<!--
 The value of `a` is used to construct the expression `ex` which applies the `+` function to the
 value 1 and the variable `b`. Note the important distinction between the way `a` and `b` are used:
+-->
+```
 
-  * The value of the *variable* `a` at expression construction time is used as an immediate value in
-    the expression. Thus, the value of `a` when the expression is evaluated no longer matters: the
-    value in the expression is already `1`, independent of whatever the value of `a` might be.
-  * On the other hand, the *symbol* `:b` is used in the expression construction, so the value of the
+`a` 的值被用来构建表达式对象 `ex` ，  `ex`  用  `+`  函数来加“值1”和“变量`b`”。 注意`a`和`b`的用法有着重要的不同点：
+
+```@raw html
+<!--
+* The value of the *variable* `a` at expression construction time is used as an immediate value in
+the expression. Thus, the value of `a` when the expression is evaluated no longer matters: the
+value in the expression is already `1`, independent of whatever the value of `a` might be.
+* On the other hand, the *symbol* `:b` is used in the expression construction, so the value of the
     variable `b` at that time is irrelevant -- `:b` is just a symbol and the variable `b` need not
     even be defined. At expression evaluation time, however, the value of the symbol `:b` is resolved
     by looking up the value of the variable `b`.
+-->
+```
+
+* 在构建表达式时，变量`a`的值，被用作一个用在表达式中的立即数。 因此, 当计算这个表达式的时候，变量`a`的值是什么都无所谓了： 在表达式中，这个值已经是1了，与`a`这个变量的值后来变成什么就没关系了。
+* 另一方面而言, 符号`:b`被用在了表达式里, 所以在构建表达式时，变量`b`的值就无所谓是多少了。`:b`只是一个符号对象，甚至变量`b`在那个时候（计算 `ex` 之前）都没必要被定义。然而在计算`ex`的时候, 把这个时候变量`b`的值当做符号`:b`的值来进行计算。
+
+```@raw html
+<!--
 
 ### Functions on `Expr`essions
 
+-->
+```
+
+### 表达式函数
+
+```@raw html
+<!--
 As hinted above, one extremely useful feature of Julia is the capability to generate and manipulate
 Julia code within Julia itself. We have already seen one example of a function returning `Expr`
 objects: the [`parse`](@ref) function, which takes a string of Julia code and returns the corresponding
 `Expr`. A function can also take one or more `Expr` objects as arguments, and return another
 `Expr`. Here is a simple, motivating example:
+-->
+```
+
+正如上文所提示过的, Julia的一个极其有用的特性是用Julia程序有能力自己生成和操作这个程序自己的代码。我们已经见过这样的一个例子，一个函数的返回值是一个表达式对象：`parse()` 函数，它输入的是一个Julia代码构成的字符串，输出的是这些代码所对应的表达式对象。 一个函数也可以把一个或者更多的表达式对象当做参数，然后返回另一个表达式对象。这是一个简单的有启发性的例子：
 
 ```jldoctest
 julia> function math_expr(op, op1, op2)
@@ -690,8 +749,14 @@ julia> eval(ex)
 21
 ```
 
+```@raw html
+<!--
 As another example, here is a function that doubles any numeric argument, but leaves expressions
 alone:
+-->
+```
+
+另一个例子：这个函数把任何数值参数都翻倍，其他参数保持不变，然后返回一个新的表达式：
 
 ```jldoctest
 julia> function make_expr2(op, opr1, opr2)
